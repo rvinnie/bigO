@@ -1,2 +1,5 @@
 .idea
 */.DS_Store
+
+services/gateway/.bin
+services/gateway/.env
