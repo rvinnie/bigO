@@ -165,3 +165,35 @@ switchLanguageButton.addEventListener("click", (event) => {
     const [, name] = editor.className.match(/language-(\w+)/);
     switchLanguageButton.textContent = name;
 });
+
+
+const codeInput = document.getElementById("codeInput");
+const countComplexityBttn = document.getElementById("countComplexity");
+
+const responseBox = document.getElementById("responseBox");
+
+
+const url = 'http://localhost:8080'
+
+async function countAlgorithmComplexity() {
+    const uri = `${url}/api/complexity`
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': codeInput.type,
+        },
+        body: codeInput.textContent
+    };
+
+    const response = await fetch(uri, options)
+    const body = await response.json()
+
+    if (response.status === 200) {
+        responseBox.textContent = body
+    } else {
+        window.location.href = "https://www.vectorstock.com/royalty-free-vector/404-error-the-page-not-found-with-ghost-vector-20356019";
+    }
+}
+
+countComplexityBttn.onclick = countAlgorithmComplexity;
