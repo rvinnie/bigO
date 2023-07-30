@@ -4,14 +4,19 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rvinnie/bigO/services/gateway/config"
+	pb "github.com/rvinnie/bigO/services/gateway/pb"
+	"google.golang.org/grpc"
 	"net/http"
 )
 
 type Handler struct {
+	algorithmComplexityClient pb.AlgorithmComplexityClient
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(grpcConn grpc.ClientConnInterface) *Handler {
+	return &Handler{
+		algorithmComplexityClient: pb.NewAlgorithmComplexityClient(grpcConn),
+	}
 }
 
 func (h *Handler) Init(cfg *config.Config) *gin.Engine {
