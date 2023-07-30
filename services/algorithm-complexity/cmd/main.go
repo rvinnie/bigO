@@ -3,7 +3,9 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/rvinnie/bigO/services/algorithm-complexity/config"
+	openai_manager "github.com/rvinnie/bigO/services/algorithm-complexity/openai_manager"
 	"github.com/rvinnie/bigO/services/algorithm-complexity/transport/grpc"
+	openai "github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -29,8 +31,13 @@ func main() {
 		logrus.Fatal("Unable to parse config", err)
 	}
 
+	// Creating chat GPT client
+	openAIClient := openai.NewClient(cfg.OpenAI.Key)
+	openAIModel := openai.GPT3Dot5Turbo
+	openAIManager := openai_manager.NewOpenAIManager(openAIClient, openAIModel)
+
 	// Creating handlers
-	grpcHandler := grpc.NewAlgorithmComplexityHandler()
+	grpcHandler := grpc.NewAlgorithmComplexityHandler(openAIManager)
 
 	// Creating gRPC server
 	grpcServer := grpc.NewServer(grpcHandler)
