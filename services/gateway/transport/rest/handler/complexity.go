@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	pb "github.com/rvinnie/bigO/services/gateway/pb"
 	"net/http"
 )
 
@@ -37,7 +38,16 @@ func (h *Handler) countAlgorithmComplexity(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
+	resp, err := h.algorithmComplexityClient.CountComplexity(c, &pb.CalculateComplexityRequest{
+		Language: "javascript",
+		CodeBody: algorithmRequestBody.Algorithm,
+	})
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"result": algorithmRequestBody.Algorithm,
+		"result": resp.ComplexityDescription,
 	})
 }

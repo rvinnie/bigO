@@ -8,6 +8,7 @@ import (
 
 type Config struct {
 	HTTP HTTPConfig
+	GRPC GRPCConfig
 	GIN  GINConfig
 }
 
@@ -16,6 +17,11 @@ type HTTPConfig struct {
 	Port         string        `yaml:"port"`
 	ReadTimeout  time.Duration `yaml:"readTimeout"`
 	WriteTimeout time.Duration `yaml:"writeTimeout"`
+}
+
+type GRPCConfig struct {
+	Host string `yaml:"host"`
+	Port string `yaml:"port"`
 }
 
 type GINConfig struct {
@@ -31,6 +37,10 @@ func InitConfig(configDir string) (*Config, error) {
 
 	var cfg Config
 	if err := viper.UnmarshalKey("http", &cfg.HTTP); err != nil {
+		return nil, err
+	}
+
+	if err := viper.UnmarshalKey("grpc", &cfg.GRPC); err != nil {
 		return nil, err
 	}
 

@@ -3,3 +3,7 @@ http:
     port: 8080
     readTimeout: 10s
     writeTimeout: 10s
+
+gRPC:
+    host: algorithm-complexity
+    port: 4040
