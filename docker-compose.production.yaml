@@ -12,8 +12,6 @@ services:
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./website:/var/www/bigo/website
-    networks:
-      - bigo
     restart: always
   gateway:
     image: gateway
@@ -25,11 +23,19 @@ services:
       - "8080:8080"
     env_file:
       - ./services/gateway/.env
-    networks:
-      - bigo
     volumes:
       - ./services/gateway/:/usr/src/app
     restart: "no"
-networks:
-  bigo:
-    driver: bridge
+  algorithm-complexity:
+    image: algorithm-complexity
+    build:
+      context: ./services/gateway
+      dockerfile: prod.Dockerfile
+    container_name: algorithm-complexity
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./services/algorithm-complexity/.env
+    volumes:
+      - ./services/algorithm-complexity/:/usr/src/app
+    restart: "no"

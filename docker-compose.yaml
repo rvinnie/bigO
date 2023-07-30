@@ -9,6 +9,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    depends_on:
+      - gateway
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./website:/var/www/bigo/website
@@ -21,8 +23,23 @@ services:
     container_name: gateway
     ports:
       - "8080:8080"
+    depends_on:
+      - algorithm-complexity
     env_file:
       - ./services/gateway/.env
     volumes:
       - ./services/gateway/:/usr/src/app
+    restart: "no"
+  algorithm-complexity:
+    image: algorithm-complexity
+    build:
+      context: ./services/algorithm-complexity
+      dockerfile: dev.Dockerfile
+    container_name: algorithm-complexity
+    ports:
+      - "4040:4040"
+    env_file:
+      - ./services/algorithm-complexity/.env
+    volumes:
+      - ./services/algorithm-complexity/:/usr/src/app
     restart: "no"
