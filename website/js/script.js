@@ -167,6 +167,18 @@ switchLanguageButton.addEventListener("click", (event) => {
 });
 
 
+// Notifications
+function pushNotify(title) {
+    let myNotify = new Notify({
+        status: 'warning',
+        title: title,
+        effect: 'slide',
+        autoclose: true,
+        autotimeout: 3000,
+        type: 3
+    })
+}
+
 const codeInput = document.getElementById("codeInput");
 const countComplexityBttn = document.getElementById("countComplexity");
 
@@ -174,25 +186,45 @@ const responseBox = document.getElementById("responseBox");
 
 
 const url = 'http://localhost:8080'
+const maxBodySize = 4096
 
 async function countAlgorithmComplexity() {
-    const uri = `${url}/api/complexity`
+    const uri = `${url}/api/complexity/count`
+
+    const algorithmBodyJson = { algorithm: codeInput.textContent };
+
+    if (algorithmBodyJson.algorithm.length > maxBodySize) {
+        pushNotify(`Body is too large!`)
+        return
+    }
+
+    responseBox.textContent = ""
 
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': codeInput.type,
         },
-        body: codeInput.textContent
+        body: JSON.stringify(algorithmBodyJson),
     };
 
     const response = await fetch(uri, options)
     const body = await response.json()
 
-    if (response.status === 200) {
-        responseBox.textContent = body
-    } else {
-        window.location.href = "https://www.vectorstock.com/royalty-free-vector/404-error-the-page-not-found-with-ghost-vector-20356019";
+
+    switch (response.status) {
+        case 200:
+            responseBox.textContent = body['result']
+            break
+        case 400:
+            window.location.href = "https://previews.123rf.com/images/leremy/leremy1702/leremy170200035/71368169-website-error-400-bad-request.jpg"
+            break
+        case 404:
+            window.location.href = "https://cdn.vectorstock.com/i/1000x1000/60/19/404-error-the-page-not-found-with-ghost-vector-20356019.webp";
+            break
+        case 500:
+            window.location.href = "https://www.crazydomains.com.au/help/500-internal-server-error/?image_id=2981"
+            break
     }
 }
 

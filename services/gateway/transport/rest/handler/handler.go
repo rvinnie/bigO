@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rvinnie/bigO/services/gateway/config"
 	"net/http"
@@ -18,6 +19,11 @@ func (h *Handler) Init(cfg *config.Config) *gin.Engine {
 
 	router := gin.New()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"POST", "GET"},
+		AllowHeaders: []string{"Content-Type"},
+	}))
 	router.GET("/ping", func(c *gin.Context) {
 		c.String(http.StatusOK, "pong")
 	})
