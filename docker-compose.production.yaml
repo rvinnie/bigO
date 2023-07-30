@@ -1,5 +1,20 @@
 version: '3.9'
 services:
+  nginx:
+    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./website:/var/www/bigo/website
+    networks:
+      - bigo
+    restart: always
   gateway:
     image: gateway
     build:
@@ -10,6 +25,11 @@ services:
       - "8080:8080"
     env_file:
       - ./services/gateway/.env
+    networks:
+      - bigo
     volumes:
       - ./services/gateway/:/usr/src/app
     restart: "no"
+networks:
+  bigo:
+    driver: bridge
