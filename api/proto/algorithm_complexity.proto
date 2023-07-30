@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "github.com/rvinnie/bigO/api/proto";
+
+package gateway;
+
+service AlgorithmComplexity {
+  rpc CountComplexity (CalculateComplexityRequest) returns (CalculateComplexityResponse) {}
+}
+
+message CalculateComplexityRequest {
+  string language = 1;
+  string codeBody = 2;
+}
+
+message CalculateComplexityResponse {
+  string complexityDescription = 1;
+}
