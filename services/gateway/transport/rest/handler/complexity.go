@@ -4,50 +4,71 @@ import (
 	"github.com/gin-gonic/gin"
 	pb "github.com/rvinnie/bigO/services/gateway/pb"
 	"net/http"
+	"strings"
 )
 
 const (
-	MaxRequestBuffer = 4096
+	MaxRequestBody = 4096
 )
 
 func (h *Handler) initComplexityRoutes(api *gin.RouterGroup) {
 	complexity := api.Group("/complexity")
 	{
-		complexity.GET("/stub", h.complexityStub)
 		complexity.POST("/count", h.countAlgorithmComplexity)
 	}
 }
 
-func (h *Handler) complexityStub(c *gin.Context) {
-	c.JSON(http.StatusOK, map[string]interface{}{
-		"result": "complexity stub",
-	})
-}
-
-type AlgorithmRequestBody struct {
-	Algorithm string `json:"algorithm" binding:"required"`
+type AlgorithmComplexityRequestBody struct {
+	Code     string `json:"code" binding:"required"`
+	Language string `json:"language" binding:"required"`
 }
 
 func (h *Handler) countAlgorithmComplexity(c *gin.Context) {
-	var algorithmRequestBody AlgorithmRequestBody
+	var algorithmRequestBody AlgorithmComplexityRequestBody
 	if err := c.BindJSON(&algorithmRequestBody); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
-	if len(algorithmRequestBody.Algorithm) > MaxRequestBuffer {
+	if len(algorithmRequestBody.Code) > MaxRequestBody {
 		c.AbortWithStatus(http.StatusBadRequest)
 	}
 
 	resp, err := h.algorithmComplexityClient.CountComplexity(c, &pb.CalculateComplexityRequest{
-		Language: "javascript",
-		CodeBody: algorithmRequestBody.Algorithm,
+		Language: algorithmRequestBody.Language,
+		CodeBody: algorithmRequestBody.Code,
 	})
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
+	shortDesc := parseAlgorithmComplexity(resp.ComplexityDescription)
+	fullDesc := resp.ComplexityDescription
+
 	c.JSON(http.StatusOK, map[string]interface{}{
-		"result": resp.ComplexityDescription,
+		"shortDescription": shortDesc,
+		"fullDescription":  fullDesc,
 	})
+}
+
+func parseAlgorithmComplexity(text string) string {
+	startIdx := strings.Index(text, "O(")
+	endIdx := -1
+
+	if startIdx == -1 {
+		return ""
+	}
+
+	for i := startIdx; i < len(text); i++ {
+		if text[i] == ')' {
+			endIdx = i
+			break
+		}
+	}
+
+	if endIdx == -1 {
+		return ""
+	}
+
+	return text[startIdx : endIdx+1]
 }

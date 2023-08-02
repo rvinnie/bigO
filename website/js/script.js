@@ -181,8 +181,9 @@ function pushNotify(title) {
 
 const codeInput = document.getElementById("codeInput");
 const countComplexityBttn = document.getElementById("countComplexity");
-
-const responseBox = document.getElementById("responseBox");
+const languageInput = document.getElementById("languageInput");
+const shortDescriptionBox = document.getElementById("shortDescriptionBox");
+const fullDescriptionBox = document.getElementById("fullDescriptionBox");
 
 
 const url = 'http://localhost:8080'
@@ -191,14 +192,15 @@ const maxBodySize = 4096
 async function countAlgorithmComplexity() {
     const uri = `${url}/api/complexity/count`
 
-    const algorithmBodyJson = { algorithm: codeInput.textContent };
+    const algorithmBodyJson = { code: codeInput.textContent, language: languageInput.textContent };
 
     if (algorithmBodyJson.algorithm.length > maxBodySize) {
         pushNotify(`Body is too large!`)
         return
     }
 
-    responseBox.textContent = ""
+    shortDescriptionBox.textContent = ""
+    fullDescriptionBox.textContent = ""
 
     const options = {
         method: 'POST',
@@ -214,7 +216,8 @@ async function countAlgorithmComplexity() {
 
     switch (response.status) {
         case 200:
-            responseBox.textContent = body['result']
+            shortDescriptionBox.textContent = body['shortDescriptionBox']
+            fullDescriptionBox.textContent = body['fullDescriptionBox']
             break
         case 400:
             window.location.href = "https://previews.123rf.com/images/leremy/leremy1702/leremy170200035/71368169-website-error-400-bad-request.jpg"
