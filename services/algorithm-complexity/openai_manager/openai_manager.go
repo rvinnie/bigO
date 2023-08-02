@@ -2,13 +2,13 @@ package openai_manager
 
 import (
 	"context"
-	"fmt"
 	"github.com/sashabaranov/go-openai"
 )
 
-//type OpenAI interface {
-//	MakeRequest(content string) (string, error)
-//}
+const (
+	Temperature = 0
+	MaxTokens   = 128
+)
 
 type OpenAIManager struct {
 	client *openai.Client
@@ -22,23 +22,21 @@ func NewOpenAIManager(client *openai.Client, model string) *OpenAIManager {
 	}
 }
 
-func (s *OpenAIManager) MakeRequest(language, code string) (string, error) {
-	systemMessage := fmt.Sprintf("You will be provided with %s code, and your task is to calculate its time complexity.", language)
-
+func (s *OpenAIManager) MakeRequest(userMessage, systemMessage string) (string, error) {
 	req := openai.ChatCompletionRequest{
 		Model: s.model,
 		Messages: []openai.ChatCompletionMessage{
 			{
 				Role:    openai.ChatMessageRoleUser,
-				Content: code,
+				Content: userMessage,
 			},
 			{
 				Role:    openai.ChatMessageRoleSystem,
 				Content: systemMessage,
 			},
 		},
-		Temperature: 0,
-		MaxTokens:   256,
+		Temperature: Temperature,
+		MaxTokens:   MaxTokens,
 	}
 
 	resp, err := s.client.CreateChatCompletion(context.Background(), req)

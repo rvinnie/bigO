@@ -1,7 +1,9 @@
-package grpc
+package handler
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"github.com/rvinnie/bigO/services/algorithm-complexity/openai_manager"
 	pb "github.com/rvinnie/bigO/services/algorithm-complexity/pb"
 )
@@ -18,8 +20,13 @@ func NewAlgorithmComplexityHandler(openAIManager *openai_manager.OpenAIManager) 
 }
 
 func (h *AlgorithmComplexityHandler) CountComplexity(ctx context.Context, request *pb.CalculateComplexityRequest) (*pb.CalculateComplexityResponse, error) {
+	systemMessage := fmt.Sprintf("You will be provided with %s code, and your task is to calculate its time complexity in O-notation.", request.Language)
 
-	resp, err := h.openAIManager.MakeRequest(request.Language, request.CodeBody)
+	if request.CodeBody == "" || request.Language == "" {
+		return nil, errors.New("wrong code body or language")
+	}
+
+	resp, err := h.openAIManager.MakeRequest(request.CodeBody, systemMessage)
 	if err != nil {
 		return nil, err
 	}
