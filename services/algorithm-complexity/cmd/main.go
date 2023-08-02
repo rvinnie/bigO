@@ -3,7 +3,10 @@ package main
 import (
 	"github.com/joho/godotenv"
 	"github.com/rvinnie/bigO/services/algorithm-complexity/config"
+	"github.com/rvinnie/bigO/services/algorithm-complexity/openai_manager"
 	"github.com/rvinnie/bigO/services/algorithm-complexity/transport/grpc"
+	"github.com/rvinnie/bigO/services/algorithm-complexity/transport/grpc/handler"
+	"github.com/sashabaranov/go-openai"
 	"github.com/sirupsen/logrus"
 	"os"
 	"os/signal"
@@ -29,8 +32,11 @@ func main() {
 		logrus.Fatal("Unable to parse config", err)
 	}
 
+	// Creating chat GPT client
+	openAIManager := openai_manager.NewOpenAIManager(openai.NewClient(cfg.OpenAI.Key), openai.GPT3Dot5Turbo)
+
 	// Creating handlers
-	grpcHandler := grpc.NewAlgorithmComplexityHandler()
+	grpcHandler := handler.NewAlgorithmComplexityHandler(openAIManager)
 
 	// Creating gRPC server
 	grpcServer := grpc.NewServer(grpcHandler)
@@ -46,7 +52,7 @@ func main() {
 	signal.Notify(quit, os.Interrupt, syscall.SIGQUIT, syscall.SIGTERM)
 
 	<-quit
-	logrus.Info("Storage (gRPC) server shutting down")
+	logrus.Info("Algorithm-complexity (gRPC) server shutting down")
 
 	grpcServer.Stop()
 }

@@ -1,13 +1,21 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"github.com/spf13/viper"
+	"os"
+)
 
 type Config struct {
-	GRPC GRPCConfig
+	GRPC   GRPCConfig
+	OpenAI OpenAIConfig
 }
 
 type GRPCConfig struct {
 	Port string `yaml:"port"`
+}
+
+type OpenAIConfig struct {
+	Key string
 }
 
 func InitConfig(configDir string) (*Config, error) {
@@ -22,5 +30,11 @@ func InitConfig(configDir string) (*Config, error) {
 		return nil, err
 	}
 
+	setEnvVariables(&cfg)
+
 	return &cfg, nil
+}
+
+func setEnvVariables(cfg *Config) {
+	cfg.OpenAI.Key = os.Getenv("OPEN_API_KEY")
 }
