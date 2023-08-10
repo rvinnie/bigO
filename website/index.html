@@ -23,21 +23,23 @@
                 </div>
             </div>
             <div class="window-body">
-                <div class="editor language-js" data-gramm="false" id="codeInput"></div>
+                <div class="editor" data-gramm="false" id="codeInput"></div>
             </div>
+
+        </div>
+        <div class="description">
             <input class="count-complexity-button" id="countComplexity" type="submit" value="Count complexity">
-            <div class="short-description-body">
-                <div class="short-description-box" id="shortDescriptionBox"></div>
-            </div>
-            <div class="full-description-body">
-                <div class="full-description-box" id="fullDescriptionBox"></div>
-            </div>
-            <div class="response-body">
-                <div class="response-box" id="responseBox"></div>
+            <div class="description-body" id="descriptionBody">
+                <details>
+                    <summary class="short-description-box" id="shortDescriptionBox"></summary>
+                    <p class="full-description-box" id="fullDescriptionBox"></p>
+                </details>
             </div>
         </div>
+
     </main>
-    <script type="module" src="js/script.js"></script>
+    <script type="module" src="js/highlighting.js"></script>
+    <script type="module" src="js/count-complexity.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.5/dist/simple-notify.min.js"></script>
 </body>
