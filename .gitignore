@@ -6,3 +6,6 @@ services/gateway/.env
 
 services/algorithm-complexity/.bin
 services/algorithm-complexity/.env
+
+services/payment/.bin
+services/payment/.env

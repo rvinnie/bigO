@@ -12,7 +12,7 @@ proto:
 	--go_opt=paths=source_relative \
 	--go-grpc_out=pb \
 	--go-grpc_opt=paths=source_relative \
-	--proto_path=$(PATH_TO_PROTO) $(PATH_TO_PROTO)/algorithm_complexity.proto
+	--proto_path=$(PATH_TO_PROTO) $(PATH_TO_PROTO)/payment.proto
 
 .DEFAULT_GOAL := run
 .PHONY: build, run, proto
