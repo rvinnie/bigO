@@ -33,7 +33,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-This project is a photo hosting implementation aimed at learning microservice architecture and devops culture.
+This project calculates the complexity of the presented algorithm. Implementation aimed at learning microservice architecture and devops culture.
 
 Technologies used:
 * [Golang](https://go.dev/)
